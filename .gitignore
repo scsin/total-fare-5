@@ -1,5 +1,7 @@
 output.xml
+stdout.txt
+
 env/
 __pycache__/
 .pytest_cache/
-main.pyc
+*.pyc

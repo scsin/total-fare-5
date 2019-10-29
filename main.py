@@ -20,25 +20,24 @@ records = [
 PERMANENT_FARE = 0.36
 DAY_RATE = 0.09
 
-get_source = list(map(lambda elem: elem['source'], records))
-same_source = list(dict.fromkeys(get_source))
+get_ends = list(filter(None, map(lambda elem: 
+    elem['end']
+    if elem['end'] > elem['start']
+    else records.remove(elem),
+    records)))
 
-get_ends = list(map(lambda elem: elem['end'], records))
 get_starts = list(map(lambda elem: elem['start'], records))
 
 hour_starts = list(map(lambda elem: datetime.fromtimestamp(elem).hour, get_starts))
-print(hour_starts)
 
 duration_call_in_seconds = list(map(lambda elemEnd, elemStart:
     elemEnd - elemStart, get_ends, get_starts))
-print(duration_call_in_seconds)
 
 total_fare = list(map(lambda elemStart, elemDuration:
-    (PERMANENT_FARE + (DAY_RATE * (elemDuration/60)))
+    round(PERMANENT_FARE + (DAY_RATE * (elemDuration/60)), 2)
     if (elemStart > 6 and elemStart < 22)
     else PERMANENT_FARE,
     hour_starts, duration_call_in_seconds))
-print(total_fare)
 
 def classify_by_phone_number(records):
     get_infos = {}
@@ -53,6 +52,4 @@ def classify_by_phone_number(records):
     for number, total in get_infos.items():
         records_answer.append({'source': number, 'total': round(total, 2)})
         
-    print (records_answer)
-
-classify_by_phone_number(records)
+    return records_answer
